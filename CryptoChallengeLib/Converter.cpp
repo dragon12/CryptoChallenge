@@ -6,6 +6,7 @@
 #include <vector>
 #include <sstream>
 #include <iostream>
+#include <cctype>
 
 const char converter::base16 [] = { "0123456789abcdef" };
 const char converter::base64 [] = { "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/" };
@@ -34,21 +35,25 @@ std::vector<char> converter::base16_to_bytes(const std::string &hex_str)
 {
 	std::vector<char> result;
 
-	for (auto it = begin(hex_str); it < end(hex_str); it += 2)
+	const auto end_str = end(hex_str);
+	auto iter = begin(hex_str);
+
+	//if it's an odd length then special case to deal with first character
+	if (hex_str.size() % 2 == 1)
 	{
-		auto this_char = base16_to_byte(*it) << 4;
-		if (std::distance(it, end(hex_str)) > 1)
-		{
-			this_char |= base16_to_byte(*(it + 1));
-		}
-		result.push_back(this_char);
+		result.push_back(base16_to_byte(*iter++));
+	}
+	for (; iter < end_str; iter += 2)
+	{
+		result.push_back((base16_to_byte(*iter) << 4) | base16_to_byte(*(iter + 1)));
 	}
 	return result;
 }
 
 char converter::base16_to_byte(char c)
 {
-	return (c >= '0' && c <= '9') ? (c - '0') : (c - 'a' + 10);
+    const auto lc = std::tolower(c);
+	return (lc >= '0' && lc <= '9') ? (lc - '0') : (lc - 'a' + 10);
 }
 
 std::vector<char> converter::base64_to_bytes(const std::string &hex_str)
@@ -58,15 +63,19 @@ std::vector<char> converter::base64_to_bytes(const std::string &hex_str)
 	{
 		if (i == '+')
 		{
-			//	result.
+            result.push_back(62);
 		}
+        else if (i == '/')
+        {
+            result.push_back(63);
+        }
 		if (i >= '0' && i <= '9')
 		{
 			result.push_back(i - '0');
 		}
 		else
 		{
-			result.push_back(i - 'a' + 10);
+			result.push_back(std::tolower(i) - 'a' + 10);
 		}
 	}
 	return result;
