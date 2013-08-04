@@ -43,6 +43,18 @@ namespace CryptoChallengeTest
             Assert::ExpectException<std::logic_error>([]() { converter::base64_to_bytes("A"); });
         }
 
+        TEST_METHOD(ConverterTestBytesToBase16)
+        {
+            const auto expected = "DBA976";
+            Assert::AreEqual(expected, converter::bytes_to_base16(converter::base16_to_bytes(expected)).c_str(), true);
+        }
+
+        TEST_METHOD(ConverterTestBytesToBase64)
+        {
+            const auto expected = "IDBA";
+            Assert::AreEqual(expected, converter::bytes_to_base64(converter::base64_to_bytes(expected)).c_str(), true);
+        }
+
 	private:
 		template<class T>
 		static bool verifyArray(const T& expected, const T& actual)

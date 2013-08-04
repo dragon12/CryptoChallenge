@@ -97,13 +97,10 @@ std::vector<char> converter::base64_to_bytes(const std::string &str)
     //4 characters maps to 3 bytes, 6 bytes each
     for (auto iter = begin(str); iter != end(str); iter += 4)
     {
-        std::cout << "testing" << std::endl;
-        std::cout << "Converting " << *iter << " into " << get_string_from_byte(base64_to_byte(*iter)) << std::endl;
         result.push_back(
                     ((base64_to_byte(*iter) << 2) & 0xFC) //all 6 bits of char0
                   | ((base64_to_byte(*(iter + 1)) >> 4) & 0x3)  //top 2 bits of char1
                   );
-        std::cout << "last: " << get_string_from_byte(result.back()) << std::endl;
         result.push_back(
                     (base64_to_byte(*(iter + 1)) & 0xF) << 4    //3:0 of char1
                   | ((base64_to_byte(*(iter + 2)) >> 2) & 0xF)  //5:2 of char2
