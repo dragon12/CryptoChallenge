@@ -27,6 +27,9 @@
     <ClInclude Include="Converter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BitUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -36,6 +39,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Converter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BitUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
