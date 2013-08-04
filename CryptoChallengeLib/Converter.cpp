@@ -11,6 +11,23 @@
 const char converter::base16 [] = { "0123456789abcdef" };
 const char converter::base64 [] = { "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/" };
 
+const char converter::base64_to_byte_lookup [] = {
+/*0  */    0, 0, 0, 0, 0, 0, 0, 0,
+/*8  */    0, 0, 0, 0, 0, 0, 0, 0,
+/*16 */    0, 0, 0, 0, 0, 0, 0, 0,
+/*24 */    0, 0, 0, 0, 0, 0, 0, 0,
+/*32 */    0, 0, 0, 0, 0, 0, 0, 0,
+/*40 */    0, 0, 0, 0, 0, 0, 0, 0,
+/*48 */    0, 0, 0, 0, 0, 0, 0, 0,
+/*56 */    0, 0, 0, 0, 0, 0, 0, 0,
+/*64 */    0, 0, 0, 0, 0, 0, 0, 0,
+/*72 */    0, 0, 0, 0, 0, 0, 0, 0,
+/*80 */    0, 0, 0, 0, 0, 0, 0, 0,
+/*88 */    0, 0, 0, 0, 0, 0, 0, 0,
+/*96 */    0, 0, 0, 0, 0, 0, 0, 0,
+
+};
+
 std::string converter::get_binary_string(const std::vector<char> &bytes)
 {
 	std::stringstream result;
@@ -41,7 +58,9 @@ std::vector<char> converter::base16_to_bytes(const std::string &hex_str)
 	//if it's an odd length then special case to deal with first character
 	if (hex_str.size() % 2 == 1)
 	{
-		result.push_back(base16_to_byte(*iter++));
+        std::stringstream ss;
+        ss << "odd size passed as hex_str: " << hex_str.size() << std::endl;
+        throw std::runtime_error(ss.str());
 	}
 	for (; iter < end_str; iter += 2)
 	{
@@ -56,28 +75,45 @@ char converter::base16_to_byte(char c)
 	return (lc >= '0' && lc <= '9') ? (lc - '0') : (lc - 'a' + 10);
 }
 
-std::vector<char> converter::base64_to_bytes(const std::string &hex_str)
+static char base64_to_byte(char c)
 {
-	std::vector<char> result;
-	for (auto i : hex_str)
-	{
-		if (i == '+')
-		{
-            result.push_back(62);
-		}
-        else if (i == '/')
-        {
-            result.push_back(63);
-        }
-		if (i >= '0' && i <= '9')
-		{
-			result.push_back(i - '0');
-		}
-		else
-		{
-			result.push_back(std::tolower(i) - 'a' + 10);
-		}
-	}
+    if      (c == '+') return 62;
+    else if (c == '/') return 63;
+    else if (c >= 'a')  return c - 'a' + 26;
+    else if (c >= 'A')  return c - 'A' + 0;
+    else                return c - '0' + 52;
+}
+
+std::vector<char> converter::base64_to_bytes(const std::string &str)
+{
+    //make sure it's a multiple of 4
+    if ((str.size() % 4) != 0)
+    {
+        throw std::logic_error("We don't handle non-multiples of 4 chars yet");
+    }
+
+    std::vector<char> result;
+
+    //4 characters maps to 3 bytes, 6 bytes each
+    for (auto iter = begin(str); iter != end(str); iter += 4)
+    {
+        std::cout << "testing" << std::endl;
+        std::cout << "Converting " << *iter << " into " << get_string_from_byte(base64_to_byte(*iter)) << std::endl;
+        result.push_back(
+                    ((base64_to_byte(*iter) << 2) & 0xFC) //all 6 bits of char0
+                  | ((base64_to_byte(*(iter + 1)) >> 4) & 0x3)  //top 2 bits of char1
+                  );
+        std::cout << "last: " << get_string_from_byte(result.back()) << std::endl;
+        result.push_back(
+                    (base64_to_byte(*(iter + 1)) & 0xF) << 4    //3:0 of char1
+                  | ((base64_to_byte(*(iter + 2)) >> 2) & 0xF)  //5:2 of char2
+                  );
+        result.push_back(
+                    ((base64_to_byte(*(iter + 2)) & 0x3) << 6) //1:0 of char2
+                  | base64_to_byte(*(iter + 3))//5:0 of char3
+            );
+    }
+
 	return result;
 }
 

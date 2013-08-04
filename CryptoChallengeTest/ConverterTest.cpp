@@ -26,6 +26,23 @@ namespace CryptoChallengeTest
 			Assert::IsTrue(verifyArray(expected_bytes, converter::base16_to_bytes(test_str)));
 		}
 
+        TEST_METHOD(ConverterTestBase16ToBytes2)
+        {
+            Assert::ExpectException<std::runtime_error>([]() { converter::base16_to_bytes("ABC"); });
+        }
+
+        TEST_METHOD(ConverterTestBase64ToBytes1)
+        {
+            const auto test_str = "IDBA";
+            const std::vector<char> expected = { (char) 0x20, (char) 0x30, (char) 0x40 };
+            Assert::IsTrue(verifyArray(expected, converter::base64_to_bytes(test_str)));
+        }
+
+        TEST_METHOD(ConverterTestBase64ToBytes2)
+        {
+            Assert::ExpectException<std::logic_error>([]() { converter::base64_to_bytes("A"); });
+        }
+
 	private:
 		template<class T>
 		static bool verifyArray(const T& expected, const T& actual)

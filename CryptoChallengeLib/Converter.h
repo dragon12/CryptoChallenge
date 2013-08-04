@@ -23,4 +23,6 @@ private:
 private:
 	static const char base16 [];
 	static const char base64 [];
+
+    static const char base64_to_byte_lookup [];
 };
