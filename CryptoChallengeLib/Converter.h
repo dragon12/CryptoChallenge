@@ -8,6 +8,9 @@
 class __declspec(dllexport) converter
 {
 public:
+    static std::string base16_to_base64(const std::string &in);
+    static std::string base64_to_base16(const std::string &in);
+
 	static std::string get_binary_string(const std::vector<char> &bytes);
     static std::string get_string_from_byte(char b);
 

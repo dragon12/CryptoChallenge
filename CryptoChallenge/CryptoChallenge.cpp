@@ -17,7 +17,8 @@ std::ostream &operator <<(std::ostream &os, const std::vector<T> &v) {
 
 int main(int argc, char argv [])
 {
-    const auto test_str = "IDBA";
-    std::cout << converter::get_binary_string(converter::base64_to_bytes(test_str)) << std::endl;
+    const auto hex_in = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
+    std::cout << "hex string: " << hex_in << std::endl;
+    std::cout << "base64 string: " << converter::base16_to_base64(hex_in) << std::endl;
 }
 

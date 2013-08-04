@@ -55,6 +55,15 @@ namespace CryptoChallengeTest
             Assert::AreEqual(expected, converter::bytes_to_base64(converter::base64_to_bytes(expected)).c_str(), true);
         }
 
+        TEST_METHOD(ConverterTestMatasano1)
+        {
+            const auto given_base16 = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
+            const auto given_base64 = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t";
+
+            Assert::AreEqual(given_base64, converter::bytes_to_base64(converter::base16_to_bytes(given_base16)).c_str(), L"base16 to base64");
+            Assert::AreEqual(given_base16, converter::bytes_to_base16(converter::base64_to_bytes(given_base64)).c_str(), true, L"base64 to base16");
+        }
+
 	private:
 		template<class T>
 		static bool verifyArray(const T& expected, const T& actual)

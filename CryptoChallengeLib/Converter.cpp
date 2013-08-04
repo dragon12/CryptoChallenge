@@ -11,22 +11,15 @@
 const char converter::base16 [] = { "0123456789abcdef" };
 const char converter::base64 [] = { "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/" };
 
-const char converter::base64_to_byte_lookup [] = {
-/*0  */    0, 0, 0, 0, 0, 0, 0, 0,
-/*8  */    0, 0, 0, 0, 0, 0, 0, 0,
-/*16 */    0, 0, 0, 0, 0, 0, 0, 0,
-/*24 */    0, 0, 0, 0, 0, 0, 0, 0,
-/*32 */    0, 0, 0, 0, 0, 0, 0, 0,
-/*40 */    0, 0, 0, 0, 0, 0, 0, 0,
-/*48 */    0, 0, 0, 0, 0, 0, 0, 0,
-/*56 */    0, 0, 0, 0, 0, 0, 0, 0,
-/*64 */    0, 0, 0, 0, 0, 0, 0, 0,
-/*72 */    0, 0, 0, 0, 0, 0, 0, 0,
-/*80 */    0, 0, 0, 0, 0, 0, 0, 0,
-/*88 */    0, 0, 0, 0, 0, 0, 0, 0,
-/*96 */    0, 0, 0, 0, 0, 0, 0, 0,
+std::string converter::base16_to_base64(const std::string &in)
+{
+    return bytes_to_base64(base16_to_bytes(in));
+}
 
-};
+std::string converter::base64_to_base16(const std::string &in)
+{
+    return bytes_to_base16(base64_to_bytes(in));
+}
 
 std::string converter::get_binary_string(const std::vector<char> &bytes)
 {
